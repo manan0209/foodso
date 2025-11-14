@@ -22,72 +22,155 @@ function Options() {
   };
 
   return (
-    <div>
+    <div style={{
+      background: '#FFC72C',
+      minHeight: '100vh',
+      fontFamily: 'Arial, sans-serif',
+      padding: '40px 20px'
+    }}>
       <div style={{
-        background: enabled ? '#4CAF50' : '#f44336',
-        color: 'white',
-        padding: '16px',
-        borderRadius: '8px',
-        marginBottom: '24px'
+        maxWidth: '800px',
+        margin: '0 auto'
       }}>
-        <h2 style={{ margin: 0, fontSize: '24px' }}>foodso Settings</h2>
-        <p style={{ margin: '8px 0 0 0', opacity: 0.9 }}>
-          {enabled ? 'Extension is Active' : 'Extension is Disabled'}
-        </p>
-      </div>
+        <div style={{
+          background: '#DA291C',
+          color: '#FFC72C',
+          padding: '40px',
+          borderRadius: '20px',
+          marginBottom: '30px',
+          border: '6px solid #000',
+          boxShadow: '8px 8px 0 #000',
+          textAlign: 'center'
+        }}>
+          <h1 style={{ 
+            margin: '0 0 15px 0', 
+            fontSize: '56px',
+            fontFamily: 'Arial Black, sans-serif',
+            textShadow: '3px 3px 0 #000',
+            letterSpacing: '2px'
+          }}>
+            FOODSO
+          </h1>
+          <p style={{ 
+            margin: 0, 
+            fontSize: '24px',
+            fontWeight: 'bold',
+            fontFamily: 'Arial, sans-serif'
+          }}>
+            {enabled ? 'PROTECTION ACTIVE' : 'PROTECTION DISABLED'}
+          </p>
+        </div>
 
-      <div style={{
-        background: 'white',
-        padding: '16px',
-        borderRadius: '8px',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-        marginBottom: '16px'
-      }}>
-        <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
-          <input
-            type="checkbox"
-            checked={enabled}
-            onChange={(e) => handleChange('enabled', e.target.checked)}
-            style={{ cursor: 'pointer', width: '18px', height: '18px' }}
-          />
-          <span style={{ fontSize: '14px', color: '#333' }}>
-            Enable foodso Extension
-          </span>
-        </label>
-        <p style={{ fontSize: '12px', color: '#666', margin: '8px 0 0 30px' }}>
-          When enabled, foodso will show healthy recipe alternatives when you visit fast food websites.
-        </p>
-      </div>
+        <div style={{
+          background: 'white',
+          padding: '30px',
+          borderRadius: '20px',
+          marginBottom: '20px',
+          border: '5px solid #000',
+          boxShadow: '6px 6px 0 #DA291C'
+        }}>
+          <label style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '15px', 
+            cursor: 'pointer',
+            fontSize: '18px',
+            fontWeight: 'bold'
+          }}>
+            <input
+              type="checkbox"
+              checked={enabled}
+              onChange={(e) => handleChange('enabled', e.target.checked)}
+              style={{ 
+                cursor: 'pointer', 
+                width: '24px', 
+                height: '24px',
+                accentColor: '#DA291C'
+              }}
+            />
+            <span style={{ color: '#000' }}>
+              Enable Fast Food Blocker
+            </span>
+          </label>
+          <p style={{ 
+            fontSize: '14px', 
+            color: '#666', 
+            margin: '15px 0 0 39px',
+            lineHeight: '1.6'
+          }}>
+            When enabled, foodso will intercept fast food websites and show you healthier alternatives you can make at home.
+          </p>
+        </div>
 
-      <div style={{
-        background: 'white',
-        padding: '16px',
-        borderRadius: '8px',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-        marginBottom: '16px'
-      }}>
-        <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', color: '#333' }}>
-          Supported Fast Food Chains
-        </h3>
-        <p style={{ fontSize: '13px', color: '#666', lineHeight: '1.6', margin: 0 }}>
-          McDonald's, KFC, Wendy's, Burger King, Taco Bell, Chick-fil-A, Popeyes, Pizza Hut, Domino's, Papa Johns, Little Caesars, Dunkin, Subway, Jimmy John's, Chipotle, Qdoba, Panera Bread, Wingstop, Arby's, Sonic, In-N-Out, Five Guys, Shake Shack, WhataB burger, and more.
-        </p>
+        <div style={{
+          background: 'white',
+          padding: '30px',
+          borderRadius: '20px',
+          border: '5px solid #000',
+          boxShadow: '6px 6px 0 #DA291C'
+        }}>
+          <h2 style={{ 
+            margin: '0 0 20px 0', 
+            fontSize: '28px', 
+            color: '#DA291C',
+            fontFamily: 'Arial Black, sans-serif'
+          }}>
+            BLOCKED SITES
+          </h2>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+            gap: '10px',
+            fontSize: '14px',
+            color: '#333',
+            fontWeight: 'bold'
+          }}>
+            {[
+              "McDonald's", "Burger King", "KFC", "Wendy's", 
+              "Taco Bell", "Pizza Hut", "Domino's", "Subway",
+              "Chick-fil-A", "Popeyes", "Arby's", "Sonic",
+              "Five Guys", "In-N-Out", "Shake Shack", "Chipotle"
+            ].map(site => (
+              <div key={site} style={{
+                background: '#FFC72C',
+                padding: '10px',
+                borderRadius: '8px',
+                border: '3px solid #000',
+                textAlign: 'center'
+              }}>
+                {site}
+              </div>
+            ))}
+          </div>
+          <p style={{ 
+            fontSize: '13px', 
+            color: '#666', 
+            margin: '20px 0 0 0',
+            textAlign: 'center'
+          }}>
+            ...and many more fast food chains
+          </p>
+        </div>
       </div>
 
       {showNotification && (
         <div style={{
-          background: '#4CAF50',
-          color: 'white',
-          padding: '12px 16px',
-          borderRadius: '6px',
-          fontSize: '14px',
+          background: '#DA291C',
+          color: '#FFC72C',
+          padding: '20px 30px',
+          borderRadius: '15px',
+          fontSize: '18px',
+          fontWeight: 'bold',
           textAlign: 'center',
           position: 'fixed',
-          bottom: '20px',
+          bottom: '30px',
           left: '50%',
-          transform: 'translateX(-50%)'
+          transform: 'translateX(-50%)',
+          border: '4px solid #000',
+          boxShadow: '4px 4px 0 #000',
+          fontFamily: 'Arial Black, sans-serif'
         }}>
-          Settings saved successfully
+          SAVED!
         </div>
       )}
     </div>
