@@ -2,4 +2,6 @@ This is basically an food related extension that i made to fight my cravings of 
 
 GO HEALTHY WITH FOODSO FATSO!! ><3
 
-[https://github.com/manan0209/foodso/blob/main/screenshots/ss2.png]
+![screenshot](screenshots/ss2.png)
+
+[Full-size image](https://github.com/manan0209/foodso/blob/main/screenshots/ss2.png)
