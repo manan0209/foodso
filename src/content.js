@@ -91,22 +91,37 @@ const fastFoodSites = [
 ];
 
 function isOnFastFoodSite() {
-  const hostname = window.location.hostname.toLowerCase();
-  const path = window.location.pathname.toLowerCase();
-  const fullUrl = window.location.href.toLowerCase();
+  const hostname = window.location.hostname.replace('www.', '');
   
-  return fastFoodSites.some(site => 
-    hostname.includes(site) || 
-    path.includes(site) || 
-    fullUrl.includes(site)
-  );
+  if (fastFoodSites.some(site => hostname.includes(site))) {
+    return true;
+  }
+  
+  return new Promise((resolve) => {
+    chrome.storage.sync.get(['customSites'], (result) => {
+      if (result.customSites && result.customSites.length > 0) {
+        const isCustomMatch = result.customSites.some(site => 
+          hostname.includes(site) || document.title.toLowerCase().includes(site.toLowerCase())
+        );
+        resolve(isCustomMatch);
+      } else {
+        resolve(false);
+      }
+    });
+  });
 }
 
-function showOverlay() {
-  if (isOnFastFoodSite()) {
+async function showOverlay() {
+  const isFastFood = await isOnFastFoodSite();
+  if (isFastFood) {
     chrome.storage.sync.get('enabled', (result) => {
       if (result.enabled !== false) {
         displayLoadingPage();
+        
+        const timeout = setTimeout(() => {
+          console.log('AI timeout, using fallback recipes');
+          displayOverlay(getFallbackRecipes());
+        }, 8000);
         
         chrome.runtime.sendMessage({
           action: 'generateRecipe',
@@ -114,13 +129,67 @@ function showOverlay() {
           title: document.title,
           content: document.body.innerText.substring(0, 1000)
         }, (response) => {
+          clearTimeout(timeout);
           if (response && response.success && response.data) {
             displayOverlay(response.data);
+          } else {
+            console.log('AI failed, using fallback recipes');
+            displayOverlay(getFallbackRecipes());
           }
         });
       }
     });
   }
+}
+
+function getFallbackRecipes() {
+  return {
+    healthFacts: "Fast food is loaded with sodium, unhealthy fats, and empty calories. Your body processes this stuff differently than real food. The high sodium makes you retain water and spike your blood pressure. The refined carbs and sugar crash your energy an hour later. Plus, you're not getting any real nutrients your body actually needs.",
+    recipes: [
+      {
+        name: "Actual Good Burger",
+        time: "15 minutes",
+        difficulty: "Easy",
+        cost: "$6",
+        ingredients: [
+          "Ground beef or turkey (1/4 lb)",
+          "Whole wheat bun",
+          "Lettuce, tomato, onion",
+          "Pickles",
+          "Mustard and ketchup",
+          "Slice of cheese if you want it"
+        ],
+        instructions: [
+          "Form meat into patty, season with salt and pepper",
+          "Cook in pan 4 minutes per side for medium",
+          "Toast the bun in the same pan",
+          "Stack it: bun, lettuce, patty, toppings",
+          "Eat it while it's hot"
+        ]
+      },
+      {
+        name: "Quick Chicken Wrap",
+        time: "10 minutes",
+        difficulty: "Easy",
+        cost: "$5",
+        ingredients: [
+          "Whole wheat tortilla",
+          "Cooked chicken breast (use rotisserie)",
+          "Shredded lettuce",
+          "Diced tomatoes",
+          "Greek yogurt ranch",
+          "Hot sauce if you like"
+        ],
+        instructions: [
+          "Warm tortilla for 20 seconds",
+          "Slice up the chicken",
+          "Layer everything down the center",
+          "Fold sides in, roll it up tight",
+          "Done"
+        ]
+      }
+    ]
+  };
 }
 
 function displayLoadingPage() {

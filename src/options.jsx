@@ -4,10 +4,13 @@ import ReactDOM from 'react-dom';
 function Options() {
   const [enabled, setEnabled] = useState(true);
   const [showNotification, setShowNotification] = useState(false);
+  const [customSites, setCustomSites] = useState([]);
+  const [newSite, setNewSite] = useState('');
 
   useEffect(() => {
-    chrome.storage.sync.get(['enabled'], (result) => {
+    chrome.storage.sync.get(['enabled', 'customSites'], (result) => {
       if (result.enabled !== undefined) setEnabled(result.enabled);
+      if (result.customSites) setCustomSites(result.customSites);
     });
   }, []);
 
@@ -19,6 +22,30 @@ function Options() {
     });
     
     if (key === 'enabled') setEnabled(value);
+  };
+
+  const addCustomSite = () => {
+    if (newSite.trim()) {
+      const cleanSite = newSite.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '');
+      if (!customSites.includes(cleanSite)) {
+        const updated = [...customSites, cleanSite];
+        setCustomSites(updated);
+        chrome.storage.sync.set({ customSites: updated }, () => {
+          setShowNotification(true);
+          setTimeout(() => setShowNotification(false), 2000);
+        });
+      }
+      setNewSite('');
+    }
+  };
+
+  const removeCustomSite = (site) => {
+    const updated = customSites.filter(s => s !== site);
+    setCustomSites(updated);
+    chrome.storage.sync.set({ customSites: updated }, () => {
+      setShowNotification(true);
+      setTimeout(() => setShowNotification(false), 2000);
+    });
   };
 
   return (
@@ -107,7 +134,8 @@ function Options() {
           padding: '30px',
           borderRadius: '20px',
           border: '5px solid #000',
-          boxShadow: '6px 6px 0 #DA291C'
+          boxShadow: '6px 6px 0 #DA291C',
+          marginBottom: '20px'
         }}>
           <h2 style={{ 
             margin: '0 0 20px 0', 
@@ -150,6 +178,112 @@ function Options() {
           }}>
             ...and many more fast food chains
           </p>
+        </div>
+
+        <div style={{
+          background: 'white',
+          padding: '30px',
+          borderRadius: '20px',
+          border: '5px solid #000',
+          boxShadow: '6px 6px 0 #DA291C'
+        }}>
+          <h2 style={{ 
+            margin: '0 0 20px 0', 
+            fontSize: '28px', 
+            color: '#DA291C',
+            fontFamily: 'Arial Black, sans-serif'
+          }}>
+            ADD YOUR OWN SITES
+          </h2>
+          
+          <div style={{ marginBottom: '20px' }}>
+            <input
+              type="text"
+              value={newSite}
+              onChange={(e) => setNewSite(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && addCustomSite()}
+              placeholder="example.com or store name"
+              style={{
+                width: 'calc(100% - 140px)',
+                padding: '12px 16px',
+                fontSize: '16px',
+                border: '3px solid #000',
+                borderRadius: '10px',
+                fontFamily: 'Arial, sans-serif',
+                marginRight: '10px'
+              }}
+            />
+            <button
+              onClick={addCustomSite}
+              style={{
+                padding: '12px 24px',
+                background: '#DA291C',
+                color: '#FFC72C',
+                border: '3px solid #000',
+                borderRadius: '10px',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                fontFamily: 'Arial Black, sans-serif'
+              }}
+            >
+              ADD
+            </button>
+          </div>
+
+          {customSites.length > 0 && (
+            <div style={{ marginTop: '20px' }}>
+              <h3 style={{
+                fontSize: '18px',
+                color: '#333',
+                marginBottom: '12px',
+                fontWeight: 'bold'
+              }}>
+                Your Custom Sites:
+              </h3>
+              <div style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '10px'
+              }}>
+                {customSites.map(site => (
+                  <div key={site} style={{
+                    background: '#FFC72C',
+                    padding: '8px 12px',
+                    borderRadius: '8px',
+                    border: '3px solid #000',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    fontSize: '14px',
+                    fontWeight: 'bold'
+                  }}>
+                    <span>{site}</span>
+                    <button
+                      onClick={() => removeCustomSite(site)}
+                      style={{
+                        background: '#DA291C',
+                        color: '#FFC72C',
+                        border: '2px solid #000',
+                        borderRadius: '50%',
+                        width: '24px',
+                        height: '24px',
+                        cursor: 'pointer',
+                        fontWeight: 'bold',
+                        fontSize: '14px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: 0
+                      }}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
